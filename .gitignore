@@ -1,0 +1,8 @@
+# Vim temporary files
+*.swp
+
+# Build-generated files
+.obj
+.dep
+bot
+*.s
