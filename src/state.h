@@ -27,6 +27,9 @@ struct State
   void write(FILE *f) const;
   void write(const std::string &fn) const;
 
+  void makeMove(int x, int y, int nx, int ny);
+
+  // Props
   int player;
   int turn;
   GameState st;

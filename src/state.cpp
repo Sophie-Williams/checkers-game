@@ -145,3 +145,10 @@ State::State(int _player, int _turn, GameState _st,
     field(_field)
 {
 }
+
+void State::makeMove(int x, int y, int nx, int ny)
+{
+  player = 1-player;
+  field.makeMove(x, y, nx, ny);
+  // TODO: Update score, time, state, etc
+}
