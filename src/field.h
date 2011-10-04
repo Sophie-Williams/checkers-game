@@ -27,7 +27,7 @@ class Field
     Mask64 blocked() const { return m_blocked; }
 
     Mask64 movesFrom(int x, int y) const;
-    void move(int x, int y, int nx, int ny);
+    void makeMove(int x, int y, int nx, int ny);
 
   private:
     Mask64 m_first;

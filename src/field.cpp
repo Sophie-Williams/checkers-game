@@ -80,7 +80,7 @@ Mask64 Field::movesFrom(int x, int y) const
        | p.translated(-nrdiag, nrdiag) | p.translated(nrdiag, -nrdiag);
 }
 
-void Field::move(int x, int y, int nx, int ny)
+void Field::makeMove(int x, int y, int nx, int ny)
 {
   Contents player = at(x, y);
   Contents fill = (player == First)? One : Two;

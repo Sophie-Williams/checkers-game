@@ -1,57 +1,51 @@
 #include "mask64.h"
 #include "field.h"
+#include "state.h"
 
 using namespace std;
-
-static Field readField()
-{
-  FILE *f = fopen("field.txt", "r");
-  char str[16];
-  Field res;
-  for (int i=0; i<8; i++)
-  {
-    fgets(str, 16, f);
-    for (int j=0; j<8; j++)
-    {
-      Field::Contents c;
-      switch(str[j])
-      {
-        default:
-        case '-': c = Field::Empty; break;
-        case 'A': c = Field::First; break;
-        case 'B': c = Field::Second; break;
-        case '1': c = Field::One; break;
-        case '2': c = Field::Two; break;
-        case '*': c = Field::Blocked; break;
-      }
-      res.set(j, i, c);
-    }
-  }
-  fclose(f);
-  return res;
-}
 
 struct Move
 {
   uint8_t x, y, nx, ny;
 };
 
+template<class T1, class T2>
+ostream& operator<<(ostream &s, pair<T1, T2> p)
+{
+  return s << "(" << p.first << ", " << p.second << ")";
+}
+
 int main()
 {
-  Field f = readField();
-  
-  cout << f << endl;
-
-  int x=4, y=5;
-  cout << "Moves from (" << x << ", " << y << ")" << endl;
-  cout << f.movesFrom(x, y) << endl;
-
-  for (auto pos: f.movesFrom(x, y))
+  State st;
+  try
   {
-    Field f1 = f;
-    f1.move(x, y, pos.first, pos.second);
-    cout << f1 << endl;
+    st = State::read("matrix.txt");
   }
+  catch (const char *err)
+  {
+    cout << "Error: " << err << endl;
+    return 1;
+  }
+  
+  cout << st.field << endl;
+
+  for (auto pos: st.field.first())
+  {
+    cout << "/==-------------------------------->" << endl;
+    cout << "Player at " << pos << endl;
+    Mask64 moves = st.field.movesFrom(pos.first, pos.second);
+    cout << moves << endl;
+    for (auto newPos: moves)
+    {
+      Field f1 = st.field;
+      f1.makeMove(pos.first, pos.second, newPos.first, newPos.second);
+      cout << f1 << endl;
+    }
+  }
+
+  st.field.makeMove(4, 3, 4, 1);
+  st.write(stdout);
 
   return 0;
 }
