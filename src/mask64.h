@@ -13,19 +13,20 @@ class Mask64
       public:
         std::pair<int, int> operator*() const 
         { 
-          int bit = firstbit(d & (~d +1));
           return std::make_pair(7 - (bit%8), 7 - (bit/8));
         }
         bool operator!=(BitIterator other) { return d != other.d; }
         BitIterator &operator++()
         {
-          d &= ~(d & (~d+1));
+          d &= ~(uint64_t(1) << bit);
+          bit = firstbit(d);
           return *this;
         }
       private:
         friend class Mask64;
-        BitIterator(uint64_t _d) : d(_d) {}
+        BitIterator(uint64_t _d) : d(_d), bit(firstbit(d)) {}
         uint64_t d;
+        int bit;
     };
 
     Mask64(uint64_t _d = 0) : d(_d) {}

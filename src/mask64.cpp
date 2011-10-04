@@ -69,9 +69,12 @@ int Mask64::firstbit(uint64_t v)
     0xffffffff00000000
   };
   int res = 0;
-  for (int i=0; i<6; i++)
+  for (int i=5; i>=0; i--)
     if (v & masks[i])
+    {
       res |= 1 << i; 
+      v &= masks[i];
+    }
   return res;
 }
 
