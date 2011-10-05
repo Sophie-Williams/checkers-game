@@ -10,73 +10,71 @@
 
 using namespace std;
 
-
 const int inf = 10000;
 const int maxdepth = 5;
 
 
 
-struct ABDecider
+class ABDecider: public DeciderBase
 {
-  Move m;
-  bool haveMove;
-  Field f;
-  stack<Field> saved;
+  public:
+    ABDecider(const Field &f, int md)
+      : DeciderBase(f, md) {}
 
-  ABDecider() : haveMove(false) {}
-
-  void makeMove(Move m)
-  {
-    saved.push(f);
-    f.makeMove(m.x, m.y, m.nx, m.ny);
-  }
-  void unmakeMove()
-  {
-    f = saved.top();
-    saved.pop();
-  }
-  
-  vector<Move> moves(bool player);
-
-  int evaluate(bool player);
-  int score(bool color, int depth, int alpha, int beta);
+    Move decideMove(bool player);
+  private:
+    int evaluate(bool player);
+    int score(bool player, int depth, int alpha, int beta);
 };
 
 
 void Ai::makeTurn(State &st)
 {
-  ABDecider d;
-  d.f = st.field;
+  ABDecider d(st.field, maxdepth);
 
-  int s = d.score(st.player==0, maxdepth, -inf, inf);
+  Move m = d.decideMove(st.player==0);
 
-  cout << (st.player==0? 'A': 'B') << ": " 
-    << d.m << " | " << s << endl; 
-
-  st.makeMove(d.m.x, d.m.y, d.m.nx, d.m.ny);
+  st.makeMove(m.x, m.y, m.nx, m.ny);
 }
 
 // ===================
 
 int ABDecider::evaluate(bool player)
 {
-  return f.ones().bitcount() - f.twos().bitcount();
+  return field().ones().bitcount() - field().twos().bitcount();
 }
 
-vector<Move> ABDecider::moves(bool player)
+Move ABDecider::decideMove(bool player)
 {
-  Mask64 ps = player? f.first() : f.second();
-  vector<Move> res;
-  for (auto pos: ps)
-    for (auto newPos: f.movesFrom(pos.first, pos.second))
-      res.push_back(Move(pos.first, pos.second, 
-                         newPos.first, newPos.second));
-  return res;
+  // Top level tree analysis
+  
+  resetBestMove();
+  int alpha = -inf;
+
+  for (Move m: moves(player))
+  {
+    makeMove(m);
+
+    int s = -score(!player, maxDepth()-1, -inf, -alpha);
+    alpha = max(alpha, s);
+
+    cout << "OPTION " << m << " | " << s << endl;
+
+    voteMove(m, s);
+    unmakeMove();
+  }
+  if (bestMoveSet())
+  {
+    cout << "CHOOSE " << bestMove() << " | " << bestMoveScore() << endl;
+    return bestMove();
+  }
+  else
+    throw "No move found. It's not ok.";
 }
 
 int ABDecider::score(bool player, int depth, int alpha, int beta)
 {
-  Field::State fst = f.checkState();
+  Field::State fst = field().checkState();
 
   // Draw
   if (fst == Field::Draw)
@@ -101,22 +99,11 @@ int ABDecider::score(bool player, int depth, int alpha, int beta)
   {
     makeMove(m);
 
-    int tmp = -score(!player, depth-1, -beta, -alpha);
-
-    if (depth == maxdepth)
-      cout << "EVAL " << m << " | " << tmp << endl;
+    int s = -score(!player, depth-1, -beta, -alpha);
+    alpha = max(alpha, s);
 
     unmakeMove();
-
-    if (depth == maxdepth && (!haveMove || tmp>alpha))
-    {
-      haveMove = true;
-      this->m = m;
-    }
-
-    if (tmp>alpha)
-      alpha = tmp;
-
+    
     if (alpha>beta)
       break;
   }
