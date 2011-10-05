@@ -1,0 +1,4 @@
+TARGET := tester
+MODULES := game util ai main_tester
+
+include common.mk

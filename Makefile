@@ -1,9 +1,13 @@
-.PHONY: all clean
+.PHONY: all clean bot tester
 
-all: bot
+all: bot tester
 
 clean:
 	$(MAKE) -f Makefile.bot clean
+	$(MAKE) -f Makefile.tester clean
 
-bot:
+bot: 
 	$(MAKE) -f Makefile.bot
+
+tester: 
+	$(MAKE) -f Makefile.tester

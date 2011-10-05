@@ -12,7 +12,7 @@
 using namespace std;
 
 const int inf = 10000;
-const int maxdepth = 6;
+const int maxdepth = 4;
 
 
 
@@ -45,7 +45,13 @@ void Ai::makeTurn(State &st)
 
 int ABDecider::evaluate(bool player)
 {
-  return field().ones().bitcount() - field().twos().bitcount();
+  int numOnes = field().ones().bitcount();
+  int numTwos = field().twos().bitcount();
+  int numBlocked = field().blocked().bitcount();
+
+  int q = player? 1 : -1;
+
+  return (10 * q * (numOnes - numTwos)) / numBlocked;
 }
 
 Move ABDecider::decideMove(bool player)
