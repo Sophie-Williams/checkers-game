@@ -146,9 +146,12 @@ State::State(int _player, int _turn, GameState _st,
 {
 }
 
-void State::makeMove(int x, int y, int nx, int ny)
+void State::makeMove(double dt, int x, int y, int nx, int ny)
 {
+  times[player] -= dt;
   player = 1-player;
+  turn++;
   field.makeMove(x, y, nx, ny);
-  // TODO: Update score, time, state, etc
+  // TODO: Update state
+  // TODO: Update score (?!)
 }

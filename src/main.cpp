@@ -18,18 +18,27 @@ int main()
     cout << "Error: " << err << endl;
     return 1;
   }
-  
+ 
+#ifdef DEBUG_INTERFACE 
+
   cout << st.field << endl;
 
   const int nmoves = 60;
   for (int i=0; i<nmoves && st.field.checkState() == Field::ContinueGame; i++)
   {
-    cout << "Semiturn " << i << ":" << endl;
+    cout << "Turn " << (i/2+1) << "/" << ("AB"[i%2]) << ":" << endl;
     Ai::makeTurn(st);
     cout << st.field << endl;
   }
 
   st.write(stdout);
+
+#else // DEBUG_INTERFACE
+
+  Ai::makeTurn(st);
+  st.write("matrix.txt");
+
+#endif // DEBUG_INTERFACE
 
   return 0;
 }

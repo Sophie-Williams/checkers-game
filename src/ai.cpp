@@ -1,4 +1,5 @@
-#include <stdint.h>
+#include <cstdint>
+#include <ctime>
 #include <vector>
 #include <stack>
 #include <iostream>
@@ -11,7 +12,7 @@
 using namespace std;
 
 const int inf = 10000;
-const int maxdepth = 5;
+const int maxdepth = 6;
 
 
 
@@ -30,11 +31,14 @@ class ABDecider: public DeciderBase
 
 void Ai::makeTurn(State &st)
 {
-  ABDecider d(st.field, maxdepth);
+  int clockStart = clock();
 
+  ABDecider d(st.field, maxdepth);
   Move m = d.decideMove(st.player==0);
 
-  st.makeMove(m.x, m.y, m.nx, m.ny);
+  double dt = double(clock()) / CLOCKS_PER_SEC;
+
+  st.makeMove(dt, m.x, m.y, m.nx, m.ny);
 }
 
 // ===================
@@ -83,16 +87,18 @@ int ABDecider::score(bool player, int depth, int alpha, int beta)
   // This player wins
   if ((player && fst == Field::FirstWins) 
       || (!player && fst == Field::SecondWins))
-    return inf;
+    return -inf;
 
   //Other player wins
   if ((player && fst == Field::SecondWins) 
       || (!player && fst == Field::FirstWins))
-    return -inf;
+    return inf;
 
   // Compute approximated value
   if (depth <= 0)
     return evaluate(player);
+
+  int thisMax = -inf;
 
   // Recurse deeper
   for (Move m: moves(player))
@@ -101,6 +107,7 @@ int ABDecider::score(bool player, int depth, int alpha, int beta)
 
     int s = -score(!player, depth-1, -beta, -alpha);
     alpha = max(alpha, s);
+    thisMax = max(thisMax, s);
 
     unmakeMove();
     
@@ -108,5 +115,5 @@ int ABDecider::score(bool player, int depth, int alpha, int beta)
       break;
   }
 
-  return alpha;
+  return thisMax;
 }
