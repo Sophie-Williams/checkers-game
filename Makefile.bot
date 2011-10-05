@@ -1,0 +1,4 @@
+TARGET := bot
+MODULES := game util ai main_bot
+
+include common.mk
