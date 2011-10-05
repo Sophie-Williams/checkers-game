@@ -1,105 +1,112 @@
-#include <cstdarg>
+#include <fstream>
 #include "state.h"
+
+using namespace std;
 
 State State::read(const std::string &fn)
 {
-  FILE *f = fopen(fn.c_str(), "r");
-  if (!f) throw "Could not open file";
+  ifstream f;
+  f.open(fn);
+  if (!f.is_open()) 
+    throw "Could not open file";
   
   State st = read(f);
   
-  fclose(f);
+  f.close();
   return st;
 }
 
-static void xfscanf(FILE *f, int n, const char *format, ...)
+State State::read(istream &src)
 {
-  va_list ap;
-  va_start(ap, format);
-  int res = vfscanf(f, format, ap);
-  if (res == EOF)
-    throw "Error reading file";
-  if (res != n)
-    throw "Bad format";
-  va_end(ap);
-}
+  static const string badformat = "Bad format";
 
-State State::read(FILE *f)
-{
-  char pl_c, st_c;
-  int turn;
-  int pl;
-  GameState st;
-  int score1, score2;
-  double time1, time2;
-  Field field;
+  try {
+    // Detect input exceptions
+    ios_base::iostate exn = src.exceptions();
+    src.exceptions(ios_base::failbit | ios_base::badbit);
 
-  // <Player Turn State>
-  xfscanf(f, 3, "%c %d %c\n", &pl_c, &turn, &st_c);
+    int pl;
+    GameState st;
+    int score1, score2;
+    double time1, time2;
+    Field field;
 
-  // Parse player
-  switch (pl_c)
-  {
-    case 'A': pl = 0; break;
-    case 'B': pl = 1; break;
-    default: goto badformat;
-  }
+    // <Player Turn State>
+    string pl_c, st_c;
+    int turn;
+    src >> pl_c >> turn >> st_c;
 
-  // Parse state
-  switch (st_c)
-  {
-    case 'A': st = First; break;
-    case 'B': st = Second; break;
-    case 'D': st = Draw; break;
-    case 'U': st = Unknown; break;
-    default: goto badformat;
-  }
+    // Parse player
+    if (pl_c == "A") 
+      pl = 0;
+    else if (pl_c == "B") 
+      pl = 1;
+    else
+      throw badformat;
 
-  // <Score Time>
-  xfscanf(f, 2, "%d %lf\n", &score1, &time1);
-  xfscanf(f, 2, "%d %lf\n", &score2, &time2);
-  
-  // <Field>
-  for (int i=0; i<8; i++)
-  {
-    char str[9];
-    xfscanf(f, 1, "%8s\n", str);
-    for (int j=0; j<8; j++)
+    // Parse state
+    if (st_c == "A") 
+      st = First;
+    else if (st_c == "B")
+      st = Second;
+    else if (st_c == "D")
+      st = Draw;
+    else if (st_c == "U")
+      st = Unknown;
+    else
+      throw badformat;
+
+    // <Score Time>
+    src >> score1 >> time1 >> score2 >> time2;
+    src.ignore(256, '\n');
+    
+    // <Field>
+    for (int i=0; i<8; i++)
     {
-      Field::Contents c;
-      switch(str[j])
-      { 
-        case '-': c = Field::Empty; break;
-        case 'A': c = Field::First; break;
-        case 'B': c = Field::Second; break;
-        case '1': c = Field::One; break;
-        case '2': c = Field::Two; break;
-        case '*': c = Field::Blocked; break;
-        default: goto badformat;
+      string str;
+      getline(src, str);
+      for (int j=0; j<8; j++)
+      {
+        Field::Contents c;
+        switch(str[j])
+        { 
+          case '-': c = Field::Empty; break;
+          case 'A': c = Field::First; break;
+          case 'B': c = Field::Second; break;
+          case '1': c = Field::One; break;
+          case '2': c = Field::Two; break;
+          case '*': c = Field::Blocked; break;
+          default: throw badformat;
+        }
+        field.set(j, i, c);
       }
-      field.set(j, i, c);
     }
+
+    src.exceptions(exn); // reset iostream exceptions
+
+    return State(pl, turn, st,
+                 score1, time1, 
+                 score2, time2,
+                 field);
   }
-
-  return State(pl, turn, st,
-               score1, time1, 
-               score2, time2,
-               field);
-
-badformat:
-  throw "Bad format";
+  catch (ios_base::failure)
+  {
+    throw badformat;
+  }
 }
 
 
 void State::write(const std::string &fn) const
 {
-  FILE *f = fopen(fn.c_str(), "w");
-  if (!f) throw "Could not open file";
+  ofstream f;
+  f.open(fn);
+  if (!f.is_open()) 
+    throw "Could not open file";
   write(f);
-  fclose(f);
+  f.close();
 }
 
-void State::write(FILE *f) const
+void State::write(ostream &dest) const
 {
   char st_c;
   switch (st)
@@ -110,9 +117,9 @@ void State::write(FILE *f) const
     default:
     case Unknown: st_c = 'U'; break;
   }
-  fprintf(f, "%c %d %c\n", player==0?'A':'B', turn, st_c);
-  fprintf(f, "%d %f\n", scores[0], float(times[0]));
-  fprintf(f, "%d %f\n", scores[1], float(times[1]));
+  dest << (player==0?'A':'B') << " " << turn << " " << st_c << endl;
+  dest << scores[0] << " " << times[0] << endl;
+  dest << scores[1] << " " << times[1] << endl;
 
   for (int y=0; y<8; y++)
   {
@@ -129,9 +136,9 @@ void State::write(FILE *f) const
         case Field::Two:     c = '2'; break;
         case Field::Blocked: c = '*'; break;
       }
-      fputc(c, f);
+      dest << c;
     }
-    fputc('\n', f);
+    dest << endl;
   }
 }
 
@@ -140,10 +147,13 @@ State::State(int _player, int _turn, GameState _st,
              int _score2, double _time2,
              const Field &_field)
   : player(_player), turn(_turn), st(_st),
-    scores{_score1, _score2}, 
-    times{_time1, _time2},
     field(_field)
 {
+  // FUCK MSVS!
+  scores[0] = _score1;
+  scores[1] = _score2;
+  times[0] = _time1;
+  times[1] = _time2;
 }
 
 void State::makeMove(double dt, int x, int y, int nx, int ny)

@@ -13,10 +13,14 @@ int main()
   {
     st = State::read("matrix.txt");
   }
-  catch (const char *err)
+  catch (const string &err)
   {
     cout << "Error: " << err << endl;
     return 1;
+  }
+  catch (...)
+  {
+    cout << "Unknown reading error" << endl;
   }
  
 #ifdef DEBUG_INTERFACE 

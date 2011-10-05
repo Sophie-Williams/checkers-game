@@ -36,7 +36,7 @@ void Ai::makeTurn(State &st)
   ABDecider d(st.field, maxdepth);
   Move m = d.decideMove(st.player==0);
 
-  double dt = double(clock()) / CLOCKS_PER_SEC;
+  double dt = double(clock() - clockStart) / CLOCKS_PER_SEC;
 
   st.makeMove(dt, m.x, m.y, m.nx, m.ny);
 }

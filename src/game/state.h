@@ -1,7 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include <cstdio>
+#include <iostream>
 #include <string>
 #include "field.h"
 
@@ -21,10 +21,10 @@ struct State
       int score2, double time2,
       const Field &field);
 
-  static State read(FILE *f);
+  static State read(std::istream &src);
   static State read(const std::string &fn);
 
-  void write(FILE *f) const;
+  void write(std::ostream &dest) const;
   void write(const std::string &fn) const;
 
   void makeMove(double dt, int x, int y, int nx, int ny);
