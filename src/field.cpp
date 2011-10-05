@@ -5,42 +5,6 @@
 
 using namespace std;
 
-static std::string contentSymbol(Field::Contents c)
-{
-#define BOLD(x)  (Term::SetBold  + x + Term::SetRegular)
-#define GREEN(x) (Term::SetGreen + x + Term::ResetColor)
-#define RED(x)   (Term::SetRed   + x + Term::ResetColor)
-#define BLACK(x) (Term::SetBlack + x + Term::ResetColor)
-#define BROWN(x) (Term::SetBrown + x + Term::ResetColor)
-#define CYAN(x)  (Term::SetCyan  + x + Term::ResetColor)
-  switch (c)
-  {
-    default:
-    case Field::Empty:   return BOLD(BLACK("."));
-    case Field::First:   return BOLD(GREEN("A"));
-    case Field::Second:  return BOLD(RED("B"));
-    case Field::One:     return CYAN("1");
-    case Field::Two:     return BROWN("2");
-    case Field::Blocked: return "*";
-  }
-#undef BOLD
-#undef GREEN
-#undef RED
-#undef BLACK
-#undef BROWN
-#undef CYAN
-}
-
-std::ostream &operator<<(std::ostream &s, const Field &f)
-{
-  for (int y=0; y<8; y++)
-  {
-    for (int x=0; x<8; x++)
-      s << ' ' << contentSymbol(f.at(x, y));
-    s << std::endl;
-  }
-  return s;
-}
 
 Field::Contents Field::at(int x, int y) const
 {
@@ -77,15 +41,6 @@ Mask64 Field::movesFrom(int x, int y) const
   int nver =   (ps & Mask64::col(x)).bitcount();
   int ndiag =  (ps & Mask64::diag(x-y)).bitcount();
   int nrdiag = (ps & Mask64::rdiag(x+y-7)).bitcount();
-
-  /*
-  cout << "nhor: " << nhor << endl;
-  cout << "nver: " << nver << endl;
-  cout << "ndiag: " << ndiag << endl;
-  cout << "nrdiag: " << nrdiag << endl;
-  cout << (Mask64::row(y) | Mask64::col(x)
-         | Mask64::diag(x-y) | Mask64::rdiag(x+y-7)) << endl;
-         */
 
   Mask64 p = Mask64::point(x, y);
   return p.translated(nhor, 0)         | p.translated(-nhor, 0)

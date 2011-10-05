@@ -142,8 +142,4 @@ class Mask64
     uint64_t d;
 };
 
-std::ostream &operator<<(std::ostream &s, Mask64 m);
-
-// Inline generators
-
 #endif // MASK64_H

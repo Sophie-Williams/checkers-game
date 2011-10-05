@@ -47,6 +47,4 @@ class Field
     Mask64 m_blocked;
 };
 
-std::ostream &operator<<(std::ostream &s, const Field &f);
-
 #endif // FIELD_H

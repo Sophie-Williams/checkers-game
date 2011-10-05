@@ -44,18 +44,6 @@ class BitCounter
 
 static BitCounter fastBitCounter;
 
-// ======
-
-std::ostream &operator<<(std::ostream &s, Mask64 m)
-{
-  for (int y=0; y<8; y++)
-  {
-    for (int x=0; x<8; x++)
-      s << ' ' << (m.at(x, y)? 'X' : '.');
-    s << std::endl;
-  }
-  return s;
-}
 
 int Mask64::firstbit(uint64_t v)
 {

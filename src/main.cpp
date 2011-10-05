@@ -2,6 +2,7 @@
 #include "field.h"
 #include "state.h"
 #include "ai.h"
+#include "debug_io.h"
 
 using namespace std;
 

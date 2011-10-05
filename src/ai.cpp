@@ -2,44 +2,18 @@
 #include <vector>
 #include <stack>
 #include <iostream>
+
 #include "ai.h"
+#include "ai_base.h"
 #include "field.h"
+#include "debug_io.h"
 
 using namespace std;
-
-// Utility
-template<class T1, class T2>
-ostream& operator <<(ostream &s, pair<T1, T2> p)
-{
-  return s << "(" << p.first << ", " << p.second << ")";
-}
 
 
 const int inf = 10000;
 const int maxdepth = 5;
 
-struct Move
-{
-  Move(int _x=0, int _y=0, int _nx=0, int _ny=0)
-    : x(_x), y(_y), nx(_nx), ny(_ny) {}
-
-  pair<int, int> from() const 
-  { 
-    return make_pair(int(x), int(y));
-  }
-  pair<int, int> to() const 
-  { 
-    return make_pair(int(nx), int(ny));
-  }
-
-  uint8_t x, y, nx, ny;
-} __attribute__((packed));
-
-
-ostream &operator <<(ostream &s, Move m)
-{
-  return s << "[" << m.from() << " -> " << m.to() << "]";
-}
 
 
 struct ABDecider
