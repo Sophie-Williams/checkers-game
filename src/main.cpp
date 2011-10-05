@@ -5,12 +5,6 @@
 
 using namespace std;
 
-template<class T1, class T2>
-ostream& operator<<(ostream &s, pair<T1, T2> p)
-{
-  return s << "(" << p.first << ", " << p.second << ")";
-}
-
 int main()
 {
   State st;
@@ -26,10 +20,11 @@ int main()
   
   cout << st.field << endl;
 
-  for (int i=0; i<10; i++)
+  const int nmoves = 60;
+  for (int i=0; i<nmoves && st.field.checkState() == Field::ContinueGame; i++)
   {
-    Ai::makeTurn(st);
     cout << "Semiturn " << i << ":" << endl;
+    Ai::makeTurn(st);
     cout << st.field << endl;
   }
 

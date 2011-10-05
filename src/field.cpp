@@ -7,12 +7,12 @@ using namespace std;
 
 static std::string contentSymbol(Field::Contents c)
 {
-#define BOLD(x) (Term::SetBold + x + Term::SetRegular)
+#define BOLD(x)  (Term::SetBold  + x + Term::SetRegular)
 #define GREEN(x) (Term::SetGreen + x + Term::ResetColor)
-#define RED(x) (Term::SetRed + x + Term::ResetColor)
+#define RED(x)   (Term::SetRed   + x + Term::ResetColor)
 #define BLACK(x) (Term::SetBlack + x + Term::ResetColor)
 #define BROWN(x) (Term::SetBrown + x + Term::ResetColor)
-#define CYAN(x) (Term::SetCyan + x + Term::ResetColor)
+#define CYAN(x)  (Term::SetCyan  + x + Term::ResetColor)
   switch (c)
   {
     default:
@@ -118,5 +118,30 @@ void Field::makeMove(int x, int y, int nx, int ny)
 
   // Put new
   set(nx, ny, player);
+}
+
+Field::State Field::checkState() const
+{
+  if (m_blocked.isNull())
+  {
+    int scoreFirst = m_ones.bitcount();
+    int scoreSecond = m_second.bitcount();
+    if (scoreFirst == scoreSecond)
+      return Draw;
+    else
+      return scoreFirst > scoreSecond? FirstWins : SecondWins;
+  }
+
+  if (m_first.isNull())
+  {
+    if (m_second.isNull())
+      return Draw;
+    else
+      return FirstWins;
+  }
+  if (m_second.isNull())
+    return SecondWins;
+
+  return ContinueGame;
 }
 

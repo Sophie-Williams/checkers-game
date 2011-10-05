@@ -17,6 +17,14 @@ class Field
       Blocked
     };
 
+    enum State
+    {
+      FirstWins,
+      SecondWins,
+      Draw,
+      ContinueGame
+    };
+
     Contents at(int x, int y) const;
     void set(int x, int y, Contents c);
 
@@ -28,6 +36,8 @@ class Field
 
     Mask64 movesFrom(int x, int y) const;
     void makeMove(int x, int y, int nx, int ny);
+
+    State checkState() const;
 
   private:
     Mask64 m_first;

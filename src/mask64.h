@@ -53,6 +53,8 @@ class Mask64
       return masked;
     }
 
+    bool isNull() const { return d == uint64_t(0); }
+
     // Bit counting
     int bitcount() const { return bitcount(d); }
     int firstbit() const { return firstbit(d); }
