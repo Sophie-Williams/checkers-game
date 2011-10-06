@@ -68,14 +68,18 @@ Move ABDecider::decideMove(bool player)
     int s = -score(!player, maxDepth()-1, -inf, -alpha);
     alpha = max(alpha, s);
 
+#ifdef PRINT_OPTIONS
     cout << "OPTION " << m << " | " << s << endl;
+#endif 
 
     voteMove(m, s);
     unmakeMove();
   }
   if (bestMoveSet())
   {
+#ifdef PRINT_OPTIONS
     cout << "CHOOSE " << bestMove() << " | " << bestMoveScore() << endl;
+#endif
     return bestMove();
   }
   else

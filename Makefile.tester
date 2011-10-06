@@ -1,4 +1,6 @@
 TARGET := tester
 MODULES := game util ai main_tester
 
+DEFINES += PRINT_OPTIONS
+
 include common.mk

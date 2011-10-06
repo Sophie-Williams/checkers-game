@@ -1,4 +1,6 @@
 TARGET := bot
 MODULES := game util ai main_bot
 
+#DEFINES += PRINT_OPTIONS
+
 include common.mk

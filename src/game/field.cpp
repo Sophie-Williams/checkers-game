@@ -80,7 +80,7 @@ Field::State Field::checkState() const
   if (m_blocked.isNull())
   {
     int scoreFirst = m_ones.bitcount();
-    int scoreSecond = m_second.bitcount();
+    int scoreSecond = m_twos.bitcount();
     if (scoreFirst == scoreSecond)
       return Draw;
     else

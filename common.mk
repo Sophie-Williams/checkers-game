@@ -5,7 +5,7 @@
 
 ### CONFIG
 
-CXX = g++
+CXX ?= g++
 CXXFLAGS = -pipe -std=c++0x -pedantic -Wall -Wextra -Wdisabled-optimization -O2 -g
 
 LDFLAGS = -lm -Wl,--as-needed
@@ -27,8 +27,8 @@ INCLUDEPATH += $(SRCDIRS)
 
 SOURCES := $(notdir $(foreach dir,$(SRCDIRS),$(wildcard $(dir)/*.cpp)))
 
-OBJDIR := .obj
-DEPDIR := .dep
+OBJDIR := .obj-$(TARGET)
+DEPDIR := .dep-$(TARGET)
 
 CXXFLAGS += $(addprefix -I,$(INCLUDEPATH))
 CXXFLAGS += $(addprefix -D,$(DEFINES))
