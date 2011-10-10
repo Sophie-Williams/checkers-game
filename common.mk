@@ -6,9 +6,11 @@
 ### CONFIG
 
 CXX ?= g++
-CXXFLAGS = -pipe -std=c++0x -pedantic -Wall -Wextra -Wdisabled-optimization -O2 -g
+WFLAGS = -pedantic -Wall -Wextra -Wdisabled-optimization
+OFLAGS = -O2 -flto
+CXXFLAGS = -pipe -std=c++0x -g $(WFLAGS) $(OFLAGS)
 
-LDFLAGS = -lm -Wl,--as-needed
+LDFLAGS = -lm -lprofiler -ltcmalloc
 
 VERBOSE_MAKE ?= 0
 

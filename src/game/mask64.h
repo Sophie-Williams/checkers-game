@@ -56,6 +56,7 @@ class Mask64
     bool isNull() const { return d == uint64_t(0); }
 
     // Bit counting
+    // TODO: SSE4 popcount instr (benchmark?)
     int bitcount() const { return bitcount(d); }
     int firstbit() const { return firstbit(d); }
 

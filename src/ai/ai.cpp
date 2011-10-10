@@ -12,7 +12,7 @@
 using namespace std;
 
 const int inf = 10000;
-const int maxdepth = 4;
+const int maxdepth = 6;
 
 
 

@@ -147,13 +147,10 @@ State::State(int _player, int _turn, GameState _st,
              int _score2, double _time2,
              const Field &_field)
   : player(_player), turn(_turn), st(_st),
+    scores{_score1, _score2},
+    times{_time1, _time2},
     field(_field)
 {
-  // FUCK MSVS!
-  scores[0] = _score1;
-  scores[1] = _score2;
-  times[0] = _time1;
-  times[1] = _time2;
 }
 
 void State::makeMove(double dt, int x, int y, int nx, int ny)
@@ -162,6 +159,17 @@ void State::makeMove(double dt, int x, int y, int nx, int ny)
   player = 1-player;
   turn++;
   field.makeMove(x, y, nx, ny);
-  // TODO: Update state
-  // TODO: Update score (?!)
+
+  // Update state
+  switch (field.checkState())
+  {
+    case Field::FirstWins:    st = First; break;
+    case Field::SecondWins:   st = Second; break;
+    case Field::Draw:         st = Draw; break;
+    case Field::ContinueGame: st = Unknown; break;
+  }
+
+  // Update score
+  scores[0] = field.ones().bitcount();
+  scores[1] = field.twos().bitcount();
 }

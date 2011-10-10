@@ -1,4 +1,4 @@
-TARGET := bot
+TARGET ?= bot
 MODULES := game util ai main_bot
 
 #DEFINES += PRINT_OPTIONS
