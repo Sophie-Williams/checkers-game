@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include <stack>
+#include <iostream>
 
 #include "mask64.h"
 #include "field.h"
@@ -26,13 +27,16 @@ struct Move
   uint8_t x, y, nx, ny;
 } __attribute__((packed));
 
+std::ostream &operator<<(std::ostream &, Move);
+
+
 
 // Implementation inlined for the sake of optimization
 class DeciderBase
 {
   public:
     DeciderBase(const Field &f, int md = 1) 
-      : m_bestMoveSet(false), m_maxDepth(md), m_field(f) {}
+      : m_bestMoveSet(false), m_maxDepth(md), m_field(f), m_balance(0) {}
 
     // Make move / rollback
     void makeMove(Move m)
@@ -89,6 +93,7 @@ class DeciderBase
     int m_maxDepth;
     Field m_field;
     std::stack<Field> m_savedFields;
+    int m_balance;
 };
 
 #endif // AI_BASE_H

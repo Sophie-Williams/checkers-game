@@ -5,7 +5,11 @@
 
 namespace Term
 {
-#define GEN_SGR(code) "\x1b[" #code "m"
+#ifdef USE_COLOR
+# define GEN_SGR(code) "\x1b[" #code "m"
+#else
+# define GEN_SGR(x) ""
+#endif
   const std::string SetBlack   = GEN_SGR(30);
   const std::string SetRed     = GEN_SGR(31);
   const std::string SetGreen   = GEN_SGR(32);

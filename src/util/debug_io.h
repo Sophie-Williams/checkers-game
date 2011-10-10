@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <utility>
+#include <list>
 
 #include "mask64.h"
 #include "field.h"
@@ -13,6 +14,24 @@ template<class T1, class T2>
 std::ostream& operator <<(std::ostream &s, std::pair<T1, T2> p)
 {
   return s << "(" << p.first << ", " << p.second << ")";
+}
+
+// list as (1, 2, 3, 4, 5)
+template<class T>
+std::ostream& operator <<(std::ostream &s, std::list<T> l)
+{
+  s << "(";
+  bool first = true;
+  for (const T &v : l)
+  {
+    if (first)
+      first = false;
+    else
+      s << ", ";
+    s << v;
+  }
+  s << ")";
+  return s;
 }
 
 // Move: (from) -> (to)
