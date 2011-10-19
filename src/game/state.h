@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "field.h"
+#include "ai_base.h"
 
 struct State
 {
@@ -28,6 +29,8 @@ struct State
   void write(const std::string &fn) const;
 
   void makeMove(double dt, int x, int y, int nx, int ny);
+
+  void makeTurn(DeciderBase &ai);
 
   // Props
   int player;

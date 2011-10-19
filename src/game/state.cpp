@@ -173,3 +173,14 @@ void State::makeMove(double dt, int x, int y, int nx, int ny)
   scores[0] = field.ones().bitcount();
   scores[1] = field.twos().bitcount();
 }
+
+void State::makeTurn(DeciderBase &ai)
+{
+  ai.setField(field);
+
+  int clockStart = clock();
+  Move m = ai.decideMove(player==0);
+  double dt = double(clock() - clockStart) / CLOCKS_PER_SEC;
+
+  makeMove(dt, m.x, m.y, m.nx, m.ny);
+}

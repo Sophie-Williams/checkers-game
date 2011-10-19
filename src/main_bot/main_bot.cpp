@@ -1,10 +1,12 @@
 #include "mask64.h"
 #include "field.h"
 #include "state.h"
-#include "ai.h"
+#include "ai_ab.h"
 #include "debug_io.h"
 
 using namespace std;
+
+const int maxDepth = 6;
 
 int main()
 {
@@ -23,7 +25,8 @@ int main()
     cout << "Unknown reading error" << endl;
   }
  
-  Ai::makeTurn(st);
+  ABDecider ai(maxDepth);
+  st.makeTurn(ai);
   st.write("matrix.txt");
 
   return 0;

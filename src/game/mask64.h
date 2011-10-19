@@ -57,8 +57,13 @@ class Mask64
 
     // Bit counting
     // TODO: SSE4 popcount instr (benchmark?)
-    int bitcount() const { return bitcount(d); }
+#if 1
+    int bitcount() const { return bitcount(d); } 
     int firstbit() const { return firstbit(d); }
+#else
+    int bitcount() const { return __builtin_popcountll(d); }
+    int firstbit() const { return 63-__builtin_clzll(d); }
+#endif
 
     // Indexing
     bool at(int x, int y) const

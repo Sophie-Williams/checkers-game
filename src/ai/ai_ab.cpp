@@ -5,53 +5,11 @@
 #include <iostream>
 #include <iomanip>
 
-#include "ai.h"
-#include "ai_base.h"
+#include "ai_ab.h"
 #include "field.h"
 #include "debug_io.h"
 
 using namespace std;
-
-const int inf = 100000;
-const int maxdepth = 6;
-
-
-
-class ABDecider: public DeciderBase
-{
-  public:
-    ABDecider(const Field &f, int md)
-      : DeciderBase(f, md) {}
-
-    Move decideMove(bool player);
-  private:
-    int evaluate(bool player);
-    int score(bool player, int depth, int alpha, int beta);
-};
-
-
-void Ai::makeTurn(State &st)
-{
-  int clockStart = clock();
-
-  ABDecider d(st.field, maxdepth);
-  Move m = d.decideMove(st.player==0);
-
-  double dt = double(clock() - clockStart) / CLOCKS_PER_SEC;
-
-  st.makeMove(dt, m.x, m.y, m.nx, m.ny);
-}
-
-// ===================
-
-int ABDecider::evaluate(bool player)
-{
-  int numOnes = field().ones().bitcount();
-  int numTwos = field().twos().bitcount();
-  int numBlocked = field().blocked().bitcount();
-
-  return numOnes - numTwos;
-}
 
 // FIXME: Code duplication
 Move ABDecider::decideMove(bool player)

@@ -46,8 +46,11 @@ class DeciderBase
     typedef std::stack<Field, std::list<Field, boost::pool_allocator<Field> > > FieldStack;
 #endif
     
-    DeciderBase(const Field &f, int md = 1) 
-      : m_bestMoveSet(false), m_maxDepth(md), m_field(f), m_balance(0) {}
+    DeciderBase(int md = 1) 
+      : m_bestMoveSet(false), m_maxDepth(md) {}
+
+    // High-level interface
+    virtual Move decideMove(bool player) = 0;
 
     // Make move / rollback
     void makeMove(Move m)
@@ -96,6 +99,7 @@ class DeciderBase
     int maxDepth() const { return m_maxDepth; }
 
     const Field &field() const { return m_field; }
+    void setField(const Field &f) { m_field = f; }
     
   private:
     Move m_bestMove;
@@ -104,7 +108,6 @@ class DeciderBase
     int m_maxDepth;
     Field m_field;
     FieldStack m_savedFields;
-    int m_balance;
 };
 
 #endif // AI_BASE_H
