@@ -5,7 +5,9 @@
 #include <utility>
 #include <vector>
 #include <stack>
+#include <list>
 #include <iostream>
+#include <boost/pool/pool_alloc.hpp>
 
 #include "mask64.h"
 #include "field.h"
@@ -35,6 +37,15 @@ std::ostream &operator<<(std::ostream &, Move);
 class DeciderBase
 {
   public:
+#if 1
+    typedef std::vector<Move> MoveSet;
+    typedef std::stack<Field> FieldStack;
+#else
+    //typedef std::vector<Move, boost::pool_allocator<Move> > MoveSet;
+    typedef std::vector<Move> MoveSet;
+    typedef std::stack<Field, std::list<Field, boost::pool_allocator<Field> > > FieldStack;
+#endif
+    
     DeciderBase(const Field &f, int md = 1) 
       : m_bestMoveSet(false), m_maxDepth(md), m_field(f), m_balance(0) {}
 
@@ -51,10 +62,10 @@ class DeciderBase
     }
 
     // Generate all available moves
-    std::vector<Move> moves(bool player) const
+    MoveSet moves(bool player) const
     {
       Mask64 ps = player? m_field.first() : m_field.second();
-      std::vector<Move> res;
+      MoveSet res;
       res.reserve(ps.bitcount() * 8);
       for (auto pos: ps)
         for (auto newPos: m_field.movesFrom(pos.first, pos.second))
@@ -92,7 +103,7 @@ class DeciderBase
     bool m_bestMoveSet;
     int m_maxDepth;
     Field m_field;
-    std::stack<Field> m_savedFields;
+    FieldStack m_savedFields;
     int m_balance;
 };
 

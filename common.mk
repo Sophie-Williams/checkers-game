@@ -10,7 +10,7 @@ WFLAGS = -pedantic -Wall -Wextra -Wdisabled-optimization
 OFLAGS = -O2 -flto
 CXXFLAGS = -pipe -std=c++0x -g $(WFLAGS) $(OFLAGS)
 
-LDFLAGS = -lm -lprofiler -ltcmalloc
+LDFLAGS = -lm -ltcmalloc
 
 VERBOSE_MAKE ?= 0
 

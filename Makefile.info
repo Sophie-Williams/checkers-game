@@ -1,0 +1,9 @@
+TARGET ?= info
+MODULES := game util ai main_info
+
+#DEFINES += USE_NEGASCOUT
+# DEFINES += USE_TRACE_OPTIONS
+# DEFINES += USE_TRACE_DEEP
+DEFINES += USE_COLOR
+
+include common.mk
