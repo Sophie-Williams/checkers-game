@@ -49,11 +49,15 @@ while true; do
   if [ $rem -eq 1 ]; then
     this_player=A
     this_player_exe="$first"
+    this_player_score="$player1score"
+    this_player_time="$player1time"
   else
     this_player=B
     this_player_exe="$second"
+    this_player_score="$player2score"
+    this_player_time="$player2time"
   fi
 
-  echo "Turn $((1 + turn/2))/$this_player:"
+  echo "Turn $((1 + turn/2))/$this_player (${this_player_time}s left):"
   $this_player_exe
 done
