@@ -2,6 +2,6 @@ TARGET ?= bot
 MODULES := game util ai main_bot
 
 DEFINES += USE_NEGASCOUT
-DEFINES += USE_TRACE_OPTIONS
+#DEFINES += USE_TRACE_OPTIONS
 
 include common.mk

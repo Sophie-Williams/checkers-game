@@ -27,7 +27,7 @@ int main()
   cout << st.field << endl;
 
   const int nmoves = 60;
-  ABDecider ai_ab(6);
+  ABDecider ai_ab(5);
   ChaoticDecider ai_chaotic;
   vector<DeciderBase *> ais = { &ai_ab, &ai_chaotic };
   for (int i=0; i<nmoves && st.field.checkState() == Field::ContinueGame; i++)

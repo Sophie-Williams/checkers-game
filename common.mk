@@ -7,7 +7,7 @@
 
 CXX ?= g++
 WFLAGS = -pedantic -Wall -Wextra -Wdisabled-optimization
-OFLAGS = -O2 -flto
+OFLAGS = -O2 
 CXXFLAGS = -pipe -std=c++0x -g $(WFLAGS) $(OFLAGS)
 
 LDFLAGS = -lm 
