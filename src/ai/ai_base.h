@@ -29,6 +29,7 @@ struct Move
   uint8_t x, y, nx, ny;
 } __attribute__((packed));
 
+
 std::ostream &operator<<(std::ostream &, Move);
 
 
@@ -45,7 +46,20 @@ class DeciderBase
     typedef std::vector<Move> MoveSet;
     typedef std::stack<Field, std::list<Field, boost::pool_allocator<Field> > > FieldStack;
 #endif
+
+    struct Score
+    {
+      Score(int _score = 0, int _depth = 0): score(_score), depth(_depth) {}
+      bool operator<(const Score &other) const { return (score<other.score) || (score==other.score && depth>other.depth); }
+      bool operator>(const Score &other) const { return (score>other.score) || (score==other.score && depth<other.depth); }
+      Score operator-() const { return Score(-score, depth); }
+
+      int score;
+      int depth;
+    };
     
+    static const int inf = 100000;
+
     DeciderBase(int md = 1) 
       : m_bestMoveSet(false), m_maxDepth(md) {}
 
@@ -79,7 +93,7 @@ class DeciderBase
 
     // Vote for move selection
     // Intended to be used at top level
-    void voteMove(Move m, int score)
+    void voteMove(Move m, const Score &score)
     {
       if (!m_bestMoveSet || score > m_bestMoveScore)
       {
@@ -93,7 +107,7 @@ class DeciderBase
     void resetBestMove() { m_bestMoveSet = false; }
     bool bestMoveSet() const { return m_bestMoveSet; }
     Move bestMove() const { return m_bestMove; }
-    int bestMoveScore() const { return m_bestMoveScore; }
+    Score bestMoveScore() const { return m_bestMoveScore; }
 
     void setMaxDepth(int d) { m_maxDepth = d; }
     int maxDepth() const { return m_maxDepth; }
@@ -103,7 +117,7 @@ class DeciderBase
     
   private:
     Move m_bestMove;
-    int m_bestMoveScore;
+    Score m_bestMoveScore;
     bool m_bestMoveSet;
     int m_maxDepth;
     Field m_field;

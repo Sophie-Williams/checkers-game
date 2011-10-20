@@ -29,33 +29,35 @@ Move ABDecider::decideMove(bool player)
   {
     makeMove(m);
 
-    int s = -inf;
+    Score s;
 
 #ifdef USE_NEGASCOUT
     // Probe with zero-sized window
-    if (alpha > -inf)
+    if (alpha > -inf && alpha < inf)
     {
-      int s = -score(!player, maxDepth()-1, -(alpha+1), -alpha);
+      s = -score(!player, 1, -(alpha+1), -alpha);
 
       trace("PROBE  " << m << " | " 
             << setw(7) << s
             << "\ta = " << alpha);
 
+      voteMove(m, s);
+
       // Cannot improve alpha
-      if (s <= alpha)
+      if (s.score <= alpha)
         goto nextMove;
 
-      alpha = s;
+      alpha = s.score;
     }
 #endif // USE_NEGASCOUT
 
-    s = -score(!player, maxDepth()-1, -inf, -alpha);
+    s = -score(!player, 1, -inf, -alpha);
 
     trace("OPTION " << m << " | " 
           << setw(7) << s 
           << "\ta = " << alpha);
 
-    alpha = max(alpha, s);
+    alpha = max(alpha, s.score);
     voteMove(m, s);
 
 nextMove:
@@ -79,36 +81,47 @@ static inline int q(bool p)
   return p? 1 : -1;
 }
 
-int ABDecider::score(bool player, int depth, int alpha, int beta)
+// <score, depth>
+DeciderBase::Score ABDecider::score(bool player, int depth, int alpha, int beta)
 {
 #ifdef USE_TRACE_DEEP
   string indent;
-  int printDepth = maxDepth() - depth;
-  for (int i=0; i<printDepth; i++)
+  for (int i=0; i<depth; i++)
     indent += "  ";
-  list<int> scores;
-# define trace(x) ((cout << indent << "[" << printDepth << "] ") << x << endl)
+  list<Score> scores;
+# define trace(x) ((cout << indent << "[" << depth << "] ") << x << endl)
 #else
 # define trace(x) 
 #endif 
 
-  Field::State fst = field().checkState();
 
 
   // ------ Trivival cases
+  
+  Field::State fst = field().checkState();
 
   // Game end conditions
   if (fst == Field::Draw)
-    return 0;
+  {
+    trace("Stop: Draw");
+    return Score(0, depth);
+  }
   if (fst == Field::FirstWins) 
-    return q(player) * inf;
+  {
+    trace("Stop: First wins");
+    return Score(q(player) * inf, depth);
+  }
   if (fst == Field::SecondWins) 
-    return q(player) * (-inf);
+  {
+    trace("Stop: Second wins");
+    return Score(q(player) * (-inf), depth);
+  }
 
   // Compute approximated value
-  if (depth <= 0)
+  if (depth > maxDepth())
   {
-    int s = q(player) * evaluate(player);
+    Score s(q(player) * evaluate(player), depth);
+    trace("Stop: Depth " << s);
     return s;
   }
 
@@ -116,7 +129,7 @@ int ABDecider::score(bool player, int depth, int alpha, int beta)
   // ------ Complex cases below
 
   // Maximum child score
-  int thisMax = -inf;
+  Score thisMax(-inf-1, inf);
 
   trace("Score " << (player?'A':'B') 
         << " with bounds" << make_pair(alpha, beta));
@@ -127,36 +140,40 @@ int ABDecider::score(bool player, int depth, int alpha, int beta)
     makeMove(m);
     trace("Do Move " << m);
 
-    int s;
+    Score s;
     
 #ifdef USE_NEGASCOUT
-    // Probe with zero-sized window
-    if (thisMax > -inf && alpha > -inf && beta > alpha+1)
+    // Probe with zero-size window
+    if (thisMax.score > -inf && alpha > -inf && beta > alpha+1)
     {
       trace("  Probe?");
-      int s = -score(!player, depth-1, -(alpha+1), -alpha);
+      s = -score(!player, depth+1, -(alpha+1), -alpha);
       trace("  Probe -> " << s << " [a = " << alpha << "]");  
 
+#ifdef USE_TRACE_DEEP
+      scores.push_back(s);
+#endif
+      
       thisMax = max(thisMax, s);
 
       // Cannot improve alpha
-      if (s <= alpha)
+      if (s.score <= alpha)
         goto nextMove;
 
-      alpha = s;
+      alpha = s.score;
     }
 #endif // USE_NEGASCOUT
 
     // Do a full-sized traversal
     trace("  FullScan?");
-    s = -score(!player, depth-1, -beta, -alpha);
+    s = -score(!player, depth+1, -beta, -alpha);
     trace("  FullScan -> " << s << " [a = " << alpha << "]");  
 
 #ifdef USE_TRACE_DEEP
     scores.push_back(s);
 #endif
 
-    alpha = max(alpha, s);
+    alpha = max(alpha, s.score);
     thisMax = max(thisMax, s);
 
 nextMove:

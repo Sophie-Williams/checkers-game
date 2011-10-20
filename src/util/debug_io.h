@@ -43,4 +43,6 @@ std::ostream &operator<<(std::ostream &s, Mask64 m);
 // Print a game field
 std::ostream &operator<<(std::ostream &s, const Field &f);
 
+std::ostream &operator<<(std::ostream &s, const DeciderBase::Score &sc);
+
 #endif // DEBUG_IO_H

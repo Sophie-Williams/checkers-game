@@ -170,16 +170,22 @@ void State::makeMove(double dt, int x, int y, int nx, int ny)
   }
 
   // Update score
-  scores[0] = field.ones().bitcount();
-  scores[1] = field.twos().bitcount();
+  scores[0] = field.first().bitcount();
+  scores[1] = field.second().bitcount();
 }
 
-void State::makeTurn(DeciderBase &ai)
+void State::makeTurn(vector<DeciderBase *> &ais)
 {
-  ai.setField(field);
 
+  Move m;
   int clockStart = clock();
-  Move m = ai.decideMove(player==0);
+  for (auto ai: ais)
+  {
+    ai->setField(field);
+    m = ai->decideMove(player==0);
+    if (ai->bestMoveScore().score > DeciderBase::inf)
+      break;
+  }
   double dt = double(clock() - clockStart) / CLOCKS_PER_SEC;
 
   makeMove(dt, m.x, m.y, m.nx, m.ny);

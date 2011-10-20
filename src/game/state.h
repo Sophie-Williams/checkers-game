@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "field.h"
 #include "ai_base.h"
 
@@ -30,7 +31,7 @@ struct State
 
   void makeMove(double dt, int x, int y, int nx, int ny);
 
-  void makeTurn(DeciderBase &ai);
+  void makeTurn(std::vector<DeciderBase *> &ais);
 
   // Props
   int player;

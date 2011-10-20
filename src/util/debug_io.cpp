@@ -58,3 +58,8 @@ std::ostream &operator<<(std::ostream &s, Mask64 m)
   }
   return s;
 }
+
+std::ostream &operator<<(std::ostream &s, const DeciderBase::Score &sc)
+{
+  return s << "<" << sc.score << " @ " << sc.depth << ">";
+}

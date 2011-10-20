@@ -2,6 +2,7 @@
 #include "field.h"
 #include "state.h"
 #include "ai_ab.h"
+#include "ai_chaotic.h"
 #include "debug_io.h"
 
 using namespace std;
@@ -25,8 +26,10 @@ int main()
     cout << "Unknown reading error" << endl;
   }
  
-  ABDecider ai(maxDepth);
-  st.makeTurn(ai);
+  ABDecider ai_ab(maxDepth);
+  ChaoticDecider ai_chaotic;
+  vector<DeciderBase *> ais = { &ai_ab, &ai_chaotic };
+  st.makeTurn(ais);
   st.write("matrix.txt");
 
   return 0;
