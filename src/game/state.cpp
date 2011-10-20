@@ -1,4 +1,5 @@
 #include <fstream>
+#include <ctime>
 #include "state.h"
 
 using namespace std;

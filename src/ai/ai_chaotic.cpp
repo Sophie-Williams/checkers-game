@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "ai_chaotic.h"
 
 Move ChaoticDecider::decideMove(bool player)

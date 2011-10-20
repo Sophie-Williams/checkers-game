@@ -7,7 +7,7 @@
 #include <stack>
 #include <list>
 #include <iostream>
-#include <boost/pool/pool_alloc.hpp>
+//#include <boost/pool/pool_alloc.hpp>
 
 #include "mask64.h"
 #include "field.h"
