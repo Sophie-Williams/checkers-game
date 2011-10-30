@@ -171,8 +171,8 @@ void State::makeMove(double dt, int x, int y, int nx, int ny)
   }
 
   // Update score
-  scores[0] = field.first().bitcount();
-  scores[1] = field.second().bitcount();
+  scores[0] = field.ones().bitcount();
+  scores[1] = field.twos().bitcount();
 }
 
 void State::makeTurn(vector<DeciderBase *> &ais)

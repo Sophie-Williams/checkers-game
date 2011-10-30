@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const int maxDepth = 5;
+const int maxDepth = 4;
 
 int main()
 {

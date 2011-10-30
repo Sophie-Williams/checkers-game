@@ -86,7 +86,7 @@ int ABDecider::evaluate(bool player)
   int checkersBalance = diff(checkers);
 
   // Fill the whole field
-  int domination = 3*checkersBalance + 2*scoreBalance + coverageBalance;
+  int domination = 100*checkersBalance + 20*scoreBalance + 5*coverageBalance;
 
   // Sum of minimal distances to 
   int distances[2] = { 1000/distance(field().first(), field().blocked()), 1000/distance(field().second(), field().blocked()) };
@@ -99,6 +99,7 @@ int ABDecider::evaluate(bool player)
 
 
   // domination vs. acquisition?
-  return domination + acquisition;
+  //return domination + acquisition;
+  return domination;
 }
 
